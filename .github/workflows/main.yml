@@ -26,7 +26,7 @@ jobs:
     runs-on: [ubuntu-latest]
     steps:
       - name: Test and publish code coverage
-        uses: paambaati/codeclimate-action@2.3.0
+        uses: paambaati/codeclimate-action@v2.3.0
         env:
           CC_TEST_REPORTER_ID: f74519dac99cedf6fe4f85f8ff089d1ec55508b08e13d1daa6685f47100b115a
         with:
