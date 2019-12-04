@@ -10,3 +10,6 @@ all: | build
 build: $(SOURCE)
 	go build -o $(GOBIN)/santa github.com/zsommers/santa/cmd/santa
 
+.PHONY: lint
+lint:
+	golint ./...
