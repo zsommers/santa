@@ -21,4 +21,4 @@ test:
 .PHONY: codeclimate
 codeclimate:
 	go test -coverprofile c.out ./...
-	./cc-test-reporter format-coverage -t gocov --prefix github.com/zsommers/santa c.out
+	./cc-reporter format-coverage -t gocov --prefix github.com/zsommers/santa c.out
