@@ -8,5 +8,5 @@ SOURCE=$(shell find . -iname "*.go")
 all: | build
 
 build: $(SOURCE)
-	go build -o $(GOBIN)/santa github.com/zsommers/santa
+	go build -o $(GOBIN)/santa github.com/zsommers/santa/cmd/santa
 

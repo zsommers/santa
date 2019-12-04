@@ -1,4 +1,4 @@
-package main
+package twilio
 
 import (
 	"encoding/json"
@@ -9,14 +9,14 @@ import (
 	"net/url"
 	"os"
 	"strings"
+	"time"
 )
 
-func mustHaveEnv(n string) (string, error) {
-	if v, ok := os.LookupEnv(n); ok {
-		log.Printf("%s: %s\n", n, v)
+func mustHaveEnv(e string) (string, error) {
+	if v, ok := os.LookupEnv(e); ok {
 		return v, nil
 	}
-	return "", fmt.Errorf("%s not set", n)
+	return "", fmt.Errorf("%s not set", e)
 }
 
 // Texter keeps track of Twillio account info
@@ -25,19 +25,20 @@ type Texter struct {
 	authToken     string
 	sendingNumber string
 	url           string
+	reallySend    bool
 }
 
 // NewTexter creates a new Texter from using environment variables, or errors
-func NewTexter() (*Texter, error) {
+func NewTexter(reallySend bool) (*Texter, error) {
 	var s, t, n string
 	var err error
-	if s, err = mustHaveEnv("TWILLIO_ACCOUNT_SID"); err != nil {
+	if s, err = mustHaveEnv("TWILIO_ACCOUNT_SID"); err != nil {
 		return nil, err
 	}
-	if t, err = mustHaveEnv("TWILLIO_AUTH_TOKEN"); err != nil {
+	if t, err = mustHaveEnv("TWILIO_AUTH_TOKEN"); err != nil {
 		return nil, err
 	}
-	if n, err = mustHaveEnv("TWILLIO_SENDING_NUMBER"); err != nil {
+	if n, err = mustHaveEnv("TWILIO_SENDING_NUMBER"); err != nil {
 		return nil, err
 	}
 
@@ -48,28 +49,60 @@ func NewTexter() (*Texter, error) {
 		authToken:     t,
 		sendingNumber: n,
 		url:           u,
+		reallySend:    reallySend,
 	}, nil
 }
 
 // SendText sends the message to the destination number
-func (t *Texter) SendText(destination string, message string) error {
+func (t *Texter) SendText(destination, message string) error {
+	reader := t.buildPayload(destination, message)
+
+	req, err := t.buildRequest(reader)
+	if err != nil {
+		return err
+	}
+
+	if t.reallySend {
+		if err := t.sendRequest(req); err != nil {
+			return err
+		}
+	} else {
+		log.Printf("Would have sent %s the following\n\t%s", destination, message)
+	}
+	return nil
+}
+
+func (t *Texter) buildPayload(destination, message string) *strings.Reader {
 	msgData := url.Values{}
 	msgData.Set("To", destination)
 	msgData.Set("From", t.sendingNumber)
 	msgData.Set("Body", message)
-	msgDataReader := *strings.NewReader(msgData.Encode())
-	client := &http.Client{}
-	req, _ := http.NewRequest("POST", t.url, &msgDataReader)
+	return strings.NewReader(msgData.Encode())
+}
+
+func (t *Texter) buildRequest(r *strings.Reader) (*http.Request, error) {
+	req, err := http.NewRequest("POST", t.url, r)
+	if err != nil {
+		return nil, err
+	}
 	req.SetBasicAuth(t.accountSID, t.authToken)
 	req.Header.Add("Accept", "application/json")
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-	resp, err := client.Do(req)
+	return req, nil
+}
+
+func (t *Texter) sendRequest(r *http.Request) error {
+	client := &http.Client{
+		Timeout: 60 * time.Second,
+	}
+	resp, err := client.Do(r)
 	if err != nil {
-		log.Panic(err)
+		return err
 	}
 
-	log.Printf("Status Code: %d\n", resp.StatusCode)
+	log.Printf("Status Code: %d", resp.StatusCode)
 	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+		// TODO: Make an actual struct for this
 		var data map[string]interface{}
 		decoder := json.NewDecoder(resp.Body)
 		if err := decoder.Decode(&data); err != nil {
