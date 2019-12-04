@@ -13,3 +13,12 @@ build: $(SOURCE)
 .PHONY: lint
 lint:
 	golint ./...
+
+.PHONY: test
+test:
+	go test -cover ./...
+
+.PHONY: codeclimate
+codeclimate:
+	go test -coverprofile c.out ./...
+	./cc-reporter format-coverage -t gocov --prefix github.com/zsommers/santa c.out

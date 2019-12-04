@@ -23,7 +23,7 @@ func (p *Person) String() string {
 	if p.Recipient != nil {
 		r = *p.Recipient
 	}
-	return fmt.Sprintf("%s\tRecipeient: %s\tExcluded: %s", p.Name, r, p.Excluded)
+	return fmt.Sprintf("%s\tRecipient: %s\tExcluded: %s", p.Name, r, p.Excluded)
 }
 
 func (p *Person) excludes(n string) bool {
