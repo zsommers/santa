@@ -29,12 +29,17 @@ jobs:
         uses: actions/checkout@v1
         
       - name: Test and publish code coverage
-        uses: paambaati/codeclimate-action@v2.3.0
         env:
           CC_TEST_REPORTER_ID: f74519dac99cedf6fe4f85f8ff089d1ec55508b08e13d1daa6685f47100b115a
-        with:
-          coverageCommand: make codeclimate
-          debug: true
+          GITHUB_SHA: github.sha
+          GITHUB_REF: github.ref
+        run: |
+          curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-reporter
+          chmod +x cc-reporter
+          ./cc-reporter before-build
+          go test -coverprofile c.out ./...
+          ./cc-reporter format-coverage -t gocov --prefix github.com/zsommers/santa c.out
+          ./cc-reporter upload-coverage
 
   build:
     name: Build
