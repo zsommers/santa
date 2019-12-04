@@ -28,6 +28,10 @@ type Texter struct {
 	reallySend    bool
 }
 
+type twilioResponse struct {
+	SID string `json:"sid"`
+}
+
 // NewTexter creates a new Texter from using environment variables, or errors
 func NewTexter(reallySend bool) (*Texter, error) {
 	var s, t, n string
@@ -102,13 +106,12 @@ func (t *Texter) sendRequest(r *http.Request) error {
 
 	log.Printf("Status Code: %d", resp.StatusCode)
 	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
-		// TODO: Make an actual struct for this
-		var data map[string]interface{}
+		var responseData twilioResponse
 		decoder := json.NewDecoder(resp.Body)
-		if err := decoder.Decode(&data); err != nil {
+		if err := decoder.Decode(&responseData); err != nil {
 			return err
 		}
-		fmt.Println(data["sid"])
+		log.Printf("Response SID: %s", responseData.SID)
 	} else {
 		body, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
