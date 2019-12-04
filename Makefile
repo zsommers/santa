@@ -13,3 +13,11 @@ build: $(SOURCE)
 .PHONY: lint
 lint:
 	golint ./...
+
+.PHONY: test
+test:
+	go test -cover ./...
+
+.PHONY: codeclimate
+codeclimate:
+	go test -coverprofile c.out ./...
