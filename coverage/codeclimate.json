@@ -1,0 +1,46 @@
+{
+  "ci_service": {
+    "branch": "tests",
+    "build_identifier": "",
+    "build_url": "",
+    "commit_sha": "32465bd5db2ac840009c6b393fae4df31a9f8c27",
+    "committed_at": 1575484188,
+    "name": ""
+  },
+  "environment": {
+    "gem_version": "2.5.2.3",
+    "package_version": "",
+    "pwd": "/Users/zachsommers/projects/santa",
+    "prefix": "github.com/zsommers/santa",
+    "rails_root": "",
+    "reporter_version": "latest",
+    "simplecov_root": ""
+  },
+  "git": {
+    "branch": "tests",
+    "head": "32465bd5db2ac840009c6b393fae4df31a9f8c27",
+    "committed_at": 1575484188
+  },
+  "covered_percent": 7.2727272727272725,
+  "covered_strength": 0,
+  "line_counts": {
+    "missed": 51,
+    "covered": 4,
+    "total": 55
+  },
+  "source_files": [
+    {
+      "blob_id": "60c625ecf0610c6a3d06d2dcd913e968fb7ebbc0",
+      "coverage": "[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,1,1,1,null,null,1,null,null,0,0,0,null,null,null,null,0,null,null,null,null,null,0,0,0,null,null,null,null,0,null,null,0,0,0,0,null,null,null,null,0,null,null,0,0,0,0,null,null,null,null,0,null,null,0,0,0,null,null,null,0,0,null,0,null,null,null,0,0,0,null,null,0,0,0,null,null,null,null,null,null,0,null,null,0,0,0,null,null,null,0,0,0,null,0,0,null,0,null,null,0,null,null,null,0,0,0,null,null,null,0,0,0,0,null,null,0,0,null,null,0]",
+      "covered_percent": 7.2727272727272725,
+      "covered_strength": 0.07272727272727272,
+      "line_counts": {
+        "missed": 51,
+        "covered": 4,
+        "total": 55
+      },
+      "name": "pkg/santa/santa.go"
+    }
+  ],
+  "repo_token": ""
+}
